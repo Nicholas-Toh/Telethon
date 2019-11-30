@@ -163,7 +163,7 @@ class AuthMethods:
         attempts = 0
         two_step_detected = False
 
-        #await self.send_code_request(phone, force_sms=force_sms)
+        await self.send_code_request(phone, force_sms=force_sms)
         sign_up = False  # assume login
         while attempts < max_attempts:
             try:
