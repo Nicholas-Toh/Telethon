@@ -25,78 +25,61 @@ class AuthMethods:
             code_callback: typing.Callable[[], typing.Union[str, int]] = None,
             first_name: str = 'New User',
             last_name: str = '',
-            max_attempts: int = 1) -> 'TelegramClient':
+            max_attempts: int = 3) -> 'TelegramClient':
         """
         Starts the client (connects and logs in if necessary).
-
         By default, this method will be interactive (asking for
         user input if needed), and will handle 2FA if enabled too.
-
         If the phone doesn't belong to an existing account (and will hence
         `sign_up` for a new one),  **you are agreeing to Telegram's
         Terms of Service. This is required and your account
         will be banned otherwise.** See https://telegram.org/tos
         and https://core.telegram.org/api/terms.
-
         If the event loop is already running, this method returns a
         coroutine that you should await on your own code; otherwise
         the loop is ran until said coroutine completes.
-
         Arguments
             phone (`str` | `int` | `callable`):
                 The phone (or callable without arguments to get it)
                 to which the code will be sent. If a bot-token-like
                 string is given, it will be used as such instead.
                 The argument may be a coroutine.
-
             password (`str`, `callable`, optional):
                 The password for 2 Factor Authentication (2FA).
                 This is only required if it is enabled in your account.
                 The argument may be a coroutine.
-
             bot_token (`str`):
                 Bot Token obtained by `@BotFather <https://t.me/BotFather>`_
                 to log in as a bot. Cannot be specified with ``phone`` (only
                 one of either allowed).
-
             force_sms (`bool`, optional):
                 Whether to force sending the code request as SMS.
                 This only makes sense when signing in with a `phone`.
-
             code_callback (`callable`, optional):
                 A callable that will be used to retrieve the Telegram
                 login code. Defaults to `input()`.
                 The argument may be a coroutine.
-
             first_name (`str`, optional):
                 The first name to be used if signing up. This has no
                 effect if the account already exists and you sign in.
-
             last_name (`str`, optional):
                 Similar to the first name, but for the last. Optional.
-
             max_attempts (`int`, optional):
                 How many times the code/password callback should be
                 retried or switching between signing in and signing up.
-
         Returns
             This `TelegramClient`, so initialization
             can be chained with ``.start()``.
-
         Example
             .. code-block:: python
-
                 client = TelegramClient('anon', api_id, api_hash)
-
                 # Starting as a bot account
                 await client.start(bot_token=bot_token)
-
                 # Starting as an user account
                 await client.start(phone)
                 # Please enter the code you received: 12345
                 # Please enter your password: *******
                 # (You are now logged in)
-
                 # Starting using a context manager (this calls start()):
                 with client:
                     pass
@@ -190,6 +173,7 @@ class AuthMethods:
                 sign_up = False
             except errors.PhoneNumberUnoccupiedError:
                 sign_up = True
+
             except errors.PhoneCodeEmptyError:
                 print('Phone code is empty.', file=sys.stderr)
             except errors.PhoneCodeExpiredError:
