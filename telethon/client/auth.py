@@ -25,7 +25,7 @@ class AuthMethods:
             code_callback: typing.Callable[[], typing.Union[str, int]] = None,
             first_name: str = 'New User',
             last_name: str = '',
-            max_attempts: int = 3) -> 'TelegramClient':
+            max_attempts: int = 1) -> 'TelegramClient':
         """
         Starts the client (connects and logs in if necessary).
 
@@ -163,7 +163,7 @@ class AuthMethods:
         attempts = 0
         two_step_detected = False
 
-        await self.send_code_request(phone, force_sms=force_sms)
+        #await self.send_code_request(phone, force_sms=force_sms)
         sign_up = False  # assume login
         while attempts < max_attempts:
             try:
@@ -190,11 +190,14 @@ class AuthMethods:
                 sign_up = False
             except errors.PhoneNumberUnoccupiedError:
                 sign_up = True
-            except (errors.PhoneCodeEmptyError,
-                    errors.PhoneCodeExpiredError,
-                    errors.PhoneCodeHashEmptyError,
-                    errors.PhoneCodeInvalidError):
-                print('Invalid code. Please try again.', file=sys.stderr)
+            except errors.PhoneCodeEmptyError:
+                print('Phone code is empty.', file=sys.stderr)
+            except errors.PhoneCodeExpiredError:
+                print('Phone code has expired.', file=sys.stderr)
+            except errors.PhoneCodeHashEmptyError:
+                print('Phone code hash is empty.', file=sys.stderr)
+            except errors.PhoneCodeInvalidError:
+                print('Phone code is invalid', file=sys.stderr)
 
             attempts += 1
         else:
