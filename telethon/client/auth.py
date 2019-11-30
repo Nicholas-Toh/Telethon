@@ -475,6 +475,7 @@ class AuthMethods:
             # phone_code_hash may be empty, if it is, do not save it (#1283)
             if result.phone_code_hash:
                 self._phone_code_hash[phone] = phone_hash = result.phone_code_hash
+                print("Hi")
                 print(self._phone_code_hash, result)
         else:
             force_sms = True
